@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  name          String
+  email         String          @unique
+  passwordHash  String
+  role          String          @default("USER")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  searchHistory SearchHistory[]
+}
+
+model Destination {
+  id            String          @id @default(uuid())
+  name          String
+  country       String
+  region        String
+  continent     String          @default("Europe")
+  latitude      Float
+  longitude     Float
+  description   String
+  imageUrl      String
+  tagline       String?
+  rating        Float           @default(4.8)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  attractions   Attraction[]
+  hotels        Hotel[]
+  searchHistory SearchHistory[]
+  travelInfo    TravelInfo?
+}
+
+model Hotel {
+  id            String      @id @default(uuid())
+  destinationId String
+  name          String
+  address       String
+  rating        Float       @default(4.5)
+  priceRange    String
+  pricePerNight Int         @default(150)
+  imageUrl      String
+  amenities     String      @default("WiFi, Breakfast, Pool, AC, Spa")
+  latitude      Float?
+  longitude     Float?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+}
+
+model Attraction {
+  id            String      @id @default(uuid())
+  destinationId String
+  name          String
+  category      String      @default("Landmark")
+  description   String
+  imageUrl      String
+  rating        Float       @default(4.7)
+  bestTimeOfDay String      @default("Morning & Afternoon")
+  latitude      Float?
+  longitude     Float?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+}
+
+model TravelInfo {
+  id               String      @id @default(uuid())
+  destinationId    String      @unique
+  bestTimeToVisit  String
+  currency         String
+  language         String
+  safetyNotes      String
+  localTips        String
+  timeZone         String      @default("UTC+0")
+  emergencyContact String      @default("112 / 911")
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  destination      Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+}
+
+model SearchHistory {
+  id            String      @id @default(uuid())
+  userId        String
+  destinationId String
+  searchedAt    DateTime    @default(now())
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,14 @@
+{
+  "name": "terraquest-travel-discovery",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack Travel Discovery Application built with React, Node/Express, and Prisma",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "start:server": "npm --prefix server start",
+    "build:client": "npm --prefix client run build",
+    "seed:db": "npm --prefix server run prisma:seed",
+    "push:db": "npm --prefix server run prisma:push"
+  }
+}
